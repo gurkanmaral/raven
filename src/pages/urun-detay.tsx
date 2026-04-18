@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom'
 import gsap from 'gsap'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 
-import heroImage from '@/assets/hero.png'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -36,6 +35,27 @@ const getStrapiUrl = () => {
 }
 
 const STRAPI_URL = getStrapiUrl()
+
+const unsplashByCategory: Record<string, string> = {
+  'Chiller Sistemleri': 'https://images.unsplash.com/photo-1760378105099-968c06b9b4bd',
+  'HVAC Çözümleri': 'https://images.unsplash.com/photo-1700124113583-81aa99ea2aa2',
+  'Özel Projeler': 'https://images.unsplash.com/photo-1741205211851-4fbbb1f4e132',
+}
+
+const placeholderImage = (category: string | null | undefined, width: number, height: number) => {
+  const base =
+    (category ? unsplashByCategory[category] : undefined) ??
+    unsplashByCategory['HVAC Çözümleri']
+  const url = new URL(base)
+  url.searchParams.set('auto', 'format')
+  url.searchParams.set('fit', 'crop')
+  url.searchParams.set('w', String(width))
+  url.searchParams.set('h', String(height))
+  url.searchParams.set('q', '80')
+  url.searchParams.set('crop', 'entropy')
+  url.searchParams.set('cs', 'srgb')
+  return url.toString()
+}
 
 const pickMediaUrl = (raw: unknown): string | null => {
   const urls: string[] = []
@@ -154,8 +174,11 @@ export default function UrunDetayPage() {
   }, [slug])
 
   const imageUrl = useMemo(() => {
-    if (!product) return heroImage
-    return pickMediaUrl(product.images) ?? heroImage
+    if (!product) return placeholderImage(null, 1200, 900)
+    return (
+      pickMediaUrl(product.images) ??
+      placeholderImage(product.category, 1200, 900)
+    )
   }, [product])
 
   const tagNames = useMemo(() => {

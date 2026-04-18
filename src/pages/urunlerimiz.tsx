@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { Box, FileText, Layers } from 'lucide-react'
 
-import heroImage from '@/assets/hero.png'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -36,6 +35,27 @@ const getStrapiUrl = () => {
 }
 
 const STRAPI_URL = getStrapiUrl()
+
+const unsplashByCategory: Record<string, string> = {
+  'Chiller Sistemleri': 'https://images.unsplash.com/photo-1760378105099-968c06b9b4bd',
+  'HVAC Çözümleri': 'https://images.unsplash.com/photo-1700124113583-81aa99ea2aa2',
+  'Özel Projeler': 'https://images.unsplash.com/photo-1741205211851-4fbbb1f4e132',
+}
+
+const placeholderImage = (category: string | null | undefined, width: number, height: number) => {
+  const base =
+    (category ? unsplashByCategory[category] : undefined) ??
+    unsplashByCategory['HVAC Çözümleri']
+  const url = new URL(base)
+  url.searchParams.set('auto', 'format')
+  url.searchParams.set('fit', 'crop')
+  url.searchParams.set('w', String(width))
+  url.searchParams.set('h', String(height))
+  url.searchParams.set('q', '80')
+  url.searchParams.set('crop', 'entropy')
+  url.searchParams.set('cs', 'srgb')
+  return url.toString()
+}
 
 const categories = [
   { icon: Box, title: 'Chiller Sistemleri' },
@@ -215,7 +235,9 @@ export default function UrunlerimizPage() {
                                     }
 
                                     const first = urls[0]
-                                    if (!first) return heroImage
+                                    if (!first) {
+                                      return placeholderImage(p.category, 120, 120)
+                                    }
                                     return first.startsWith('http')
                                       ? first
                                       : `${STRAPI_URL}${first}`
