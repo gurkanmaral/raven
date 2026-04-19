@@ -2,9 +2,15 @@ import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ArrowRight, ShieldCheck, Snowflake, Zap } from 'lucide-react'
+import { ArrowRight, Gauge, Leaf, ShieldCheck, Snowflake, Wrench, Zap } from 'lucide-react'
 
 import { HeroThree } from '@/components/site/hero-three'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -28,6 +34,71 @@ const solutions = [
     title: 'Güvenilir Operasyon',
     description:
       'Yedeklilik, uzaktan izleme ve servis altyapısıyla kesintisiz çalışma.',
+  },
+]
+
+const industries = [
+  {
+    icon: Snowflake,
+    title: 'Gıda & Depolama',
+    description: 'Soğuk oda, proses ve depo sıcaklık kontrolü için stabil çözümler.',
+  },
+  {
+    icon: Zap,
+    title: 'Üretim Tesisleri',
+    description: 'Proses soğutma, hat stabilitesi ve enerji optimizasyonu odaklı tasarım.',
+  },
+  {
+    icon: Gauge,
+    title: 'Verimlilik Projeleri',
+    description: 'Isı geri kazanım ve otomasyon ile toplam maliyeti düşüren yaklaşımlar.',
+  },
+  {
+    icon: Leaf,
+    title: 'Sürdürülebilirlik',
+    description: 'Daha düşük tüketim, daha az bakım ve uzun ömürlü işletme hedefi.',
+  },
+]
+
+const processSteps = [
+  {
+    icon: Gauge,
+    title: 'Keşif & Analiz',
+    description: 'Saha verileri, kapasite hesabı ve risk analiziyle doğru başlangıç.',
+  },
+  {
+    icon: Wrench,
+    title: 'Tasarım & Projelendirme',
+    description: 'Modüler mimari, kontrol senaryoları ve ölçeklenebilir altyapı.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Kurulum & Devreye Alma',
+    description: 'Test, kalibrasyon ve performans doğrulama ile güvenli teslim.',
+  },
+  {
+    icon: Zap,
+    title: 'İzleme & İyileştirme',
+    description: 'Uzaktan izleme, raporlama ve enerji optimizasyonu ile sürekli gelişim.',
+  },
+]
+
+const faqs = [
+  {
+    q: 'Ürünleri nasıl güncelliyoruz?',
+    a: 'Ürünleri Strapi üzerinden yönetebilirsiniz. Yayınladığınızda web sitenizde otomatik görünür.',
+  },
+  {
+    q: 'Keşif ve teklif süreci nasıl ilerler?',
+    a: 'İletişim formu ile talep oluşturun. İhtiyaca göre saha keşfi/online görüşme sonrası teklif hazırlanır.',
+  },
+  {
+    q: 'Servis ve bakım desteği var mı?',
+    a: 'Evet. Planlı bakım ve hızlı müdahale süreçleriyle sistemin sürekliliğini hedefleriz.',
+  },
+  {
+    q: 'Ne kadar sürede devreye alınır?',
+    a: 'Proje kapsamına bağlıdır. Modüler tasarım ve hazır kontrol senaryoları ile süreyi kısaltırız.',
   },
 ]
 
@@ -101,6 +172,7 @@ export default function LandingPage() {
             className="absolute -bottom-48 -right-48 size-[640px] rounded-full bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.14),transparent_62%)] blur-3xl"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/80 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.10),transparent_55%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.06)_1px,transparent_1px)] [background-size:64px_64px] opacity-[0.15]" />
         </div>
@@ -250,6 +322,134 @@ export default function LandingPage() {
                   İletişime Geç <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-background">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+          <div data-animate="reveal" className="flex items-end justify-between gap-6">
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-gold">Kullanım Alanları</div>
+              <h2 className="font-heading text-3xl font-semibold text-foreground">
+                Sektöre göre doğru çözüm
+              </h2>
+              <p className="max-w-2xl text-sm leading-7 text-muted-foreground md:text-base">
+                Soğutma sistemleri tek tip değildir. İhtiyaca göre seçilen ekipman ve kontrol
+                senaryosu, işletme maliyetini belirler.
+              </p>
+            </div>
+            <Button asChild variant="outline" className="border-border bg-background/80 hover:bg-muted">
+              <Link to="/iletisim">Proje Sor</Link>
+            </Button>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-2" data-animate="reveal">
+            {industries.map((item) => {
+              const Icon = item.icon
+              return (
+                <Card key={item.title} className="border-border bg-card p-7 text-foreground">
+                  <div className="flex items-start gap-4">
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-gold/10 text-gold">
+                      <Icon className="size-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-base font-semibold">{item.title}</div>
+                      <p className="text-sm leading-6 text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-background">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+          <div className="grid gap-10 md:grid-cols-2 md:items-start">
+            <div data-animate="reveal" className="space-y-4">
+              <div className="text-sm font-medium text-gold">Süreç</div>
+              <h2 className="font-heading text-3xl font-semibold text-foreground">
+                Net adımlar, ölçülebilir sonuç
+              </h2>
+              <p className="text-sm leading-7 text-muted-foreground md:text-base">
+                Keşiften devreye almaya kadar her aşamada ölçüm ve doğrulama ile ilerleriz.
+              </p>
+
+              <Card className="border-border bg-gradient-to-b from-muted to-background p-7 text-foreground">
+                <div className="grid gap-5">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">Örnek kazanım</div>
+                    <div className="text-2xl font-semibold">%15–30</div>
+                  </div>
+                  <Separator className="bg-border" />
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">Servis yaklaşımı</div>
+                    <div className="text-2xl font-semibold">Planlı</div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            <div className="grid gap-4" data-animate="reveal">
+              {processSteps.map((step, idx) => {
+                const Icon = step.icon
+                return (
+                  <Card key={step.title} className="border-border bg-card p-6 text-foreground">
+                    <div className="flex items-start gap-4">
+                      <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-foreground/70">
+                        {idx + 1}
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="text-base font-semibold">{step.title}</div>
+                          <div className="flex size-8 items-center justify-center rounded-lg bg-gold/10 text-gold">
+                            <Icon className="size-4" />
+                          </div>
+                        </div>
+                        <p className="text-sm leading-6 text-muted-foreground">
+                          {step.description}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-background">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+          <div className="grid gap-10 md:grid-cols-2 md:items-start">
+            <div data-animate="reveal" className="space-y-4">
+              <div className="text-sm font-medium text-gold">SSS</div>
+              <h2 className="font-heading text-3xl font-semibold text-foreground">
+                Sık sorulan sorular
+              </h2>
+              <p className="text-sm leading-7 text-muted-foreground md:text-base">
+                Hızlı bir özet. Daha detaylı bilgi için iletişime geçebilirsiniz.
+              </p>
+            </div>
+
+            <div data-animate="reveal" className="rounded-2xl border border-border bg-card p-2">
+              <Accordion type="single" collapsible className="w-full">
+                {faqs.map((item, idx) => (
+                  <AccordionItem key={idx} value={`faq-${idx}`}>
+                    <AccordionTrigger className="px-4 text-left">
+                      {item.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4 text-sm leading-6 text-muted-foreground">
+                      {item.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </div>
         </div>
