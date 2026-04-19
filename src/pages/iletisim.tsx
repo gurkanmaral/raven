@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import gsap from 'gsap'
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { toast } from 'sonner'
+import emailjs from '@emailjs/browser'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -12,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 export default function IletisimPage() {
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const formRef = useRef<HTMLFormElement | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useLayoutEffect(() => {
@@ -32,11 +34,35 @@ export default function IletisimPage() {
     e.preventDefault()
     if (isSubmitting) return
 
+    const publicKey = import.meta.env?.VITE_EMAILJS_PUBLIC_KEY
+    const serviceId = import.meta.env?.VITE_EMAILJS_SERVICE_ID
+    const templateId = import.meta.env?.VITE_EMAILJS_TEMPLATE_ID
+
+    const missing = [
+      !publicKey ? 'VITE_EMAILJS_PUBLIC_KEY' : null,
+      !serviceId ? 'VITE_EMAILJS_SERVICE_ID' : null,
+      !templateId ? 'VITE_EMAILJS_TEMPLATE_ID' : null,
+    ].filter((v): v is string => Boolean(v))
+
+    if (missing.length > 0) {
+      toast.error(`EmailJS ayarları eksik: ${missing.join(', ')}`)
+      return
+    }
+
     setIsSubmitting(true)
-    await new Promise((r) => setTimeout(r, 650))
-    setIsSubmitting(false)
-    toast.success('Mesajınız alındı. En kısa sürede dönüş yapacağız.')
-    e.currentTarget.reset()
+    try {
+      if (!formRef.current) {
+        throw new Error('Form not found')
+      }
+
+      await emailjs.sendForm(serviceId, templateId, formRef.current, publicKey)
+      toast.success('Mesajınız alındı. En kısa sürede dönüş yapacağız.')
+      formRef.current.reset()
+    } catch {
+      toast.error('Mesaj gönderilemedi. Lütfen tekrar deneyin.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -99,14 +125,14 @@ export default function IletisimPage() {
             className="border-border bg-card p-8 text-foreground"
           >
             <div className="font-heading text-xl font-semibold">Mesaj Gönder</div>
-            <form onSubmit={onSubmit} className="mt-6 grid gap-5">
+            <form ref={formRef} onSubmit={onSubmit} className="mt-6 grid gap-5">
               <div className="grid gap-2">
                 <Label htmlFor="name" className="text-foreground/80">
                   Ad Soyad
                 </Label>
                 <Input
                   id="name"
-                  name="name"
+                  name="from_name"
                   required
                   className="border-border bg-background text-foreground placeholder:text-muted-foreground"
                   placeholder="Adınız Soyadınız"
@@ -119,7 +145,7 @@ export default function IletisimPage() {
                 </Label>
                 <Input
                   id="email"
-                  name="email"
+                  name="reply_to"
                   type="email"
                   required
                   className="border-border bg-background text-foreground placeholder:text-muted-foreground"
